@@ -1,3 +1,5 @@
+package Backend;
+
 public class Mode0Validator implements Validator {
     @Override
     public ValidationResult validate(SudokuBoard board) {

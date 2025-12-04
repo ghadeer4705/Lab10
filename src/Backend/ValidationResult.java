@@ -1,3 +1,5 @@
+package Backend;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +25,24 @@ public class ValidationResult {
         return rowErrors.isEmpty() && columnErrors.isEmpty() && boxErrors.isEmpty();
     }
 
-    public void printFinalResult() {
-        if (isValid()) {
+    public boolean isCompleted(SudokuBoard sb){
+
+        for (int r =0 ; r<9; r++){
+            for (int c=0; c<9; c++){
+                if (sb.getIndex(r,c) ==0){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void printFinalResult(SudokuBoard sb) {
+        if (isCompleted(sb)) {
+            System.out.println("COMPLETED");
+            return;
+        }
+       else if (isValid()) {
             System.out.println("VALID");
             return;
         } else {

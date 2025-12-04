@@ -1,3 +1,5 @@
+package Backend;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.io.File;
@@ -22,7 +24,7 @@ public class CSVFileReader {
 
                 for (int col = 0; col < 9; col++) {
                     int val = Integer.parseInt(nums[col].trim());
-                    if (val < 1 || val > 9) {
+                    if (val < 0 || val > 9) {
                         throw new Exception("Invalid number at row " + (row + 1) + ", col " + (col + 1));
                     }
                     board[row][col] = val;

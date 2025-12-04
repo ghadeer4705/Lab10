@@ -1,3 +1,5 @@
+package Backend;
+
 public class Main {
     public static void main(String[] args) throws Exception {
         String file = "sudoku.csv"; // Hardcoded path for check
@@ -6,6 +8,6 @@ public class Main {
 
         Validator validator = new Mode0Validator();
         ValidationResult result = validator.validate(board);
-        result.printFinalResult();
+     //   result.printFinalResult();
     }
 }
