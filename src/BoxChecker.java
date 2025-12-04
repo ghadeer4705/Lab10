@@ -1,12 +1,10 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class BoxChecker implements Checker {
 
     private SudokuBoard board;
-
-    private List<DuplicateInfo> result = Collections.synchronizedList(new ArrayList<>());
+    private List<DuplicateInfo> result = new ArrayList<>();
 
 
     public BoxChecker(SudokuBoard board) {
@@ -14,7 +12,6 @@ public class BoxChecker implements Checker {
 
     }
 
-    // Check a single box
     public void checkSingleBox(int boxRowStart, int boxColStart, int boxNumber) {
         for (int num = 1; num <= 9; num++) {
             List<Integer> positions = new ArrayList<>();
@@ -33,7 +30,6 @@ public class BoxChecker implements Checker {
         }
     }
 
-    // Check all boxes
     public void checkAllBoxes() {
         int boxNumber = 1;
         for (int sr = 0; sr < 9; sr += 3) {
@@ -42,11 +38,6 @@ public class BoxChecker implements Checker {
                 boxNumber++;
             }
         }
-    }
-
-    @Override
-    public void run() {
-        checkAllBoxes();
     }
 
     @Override

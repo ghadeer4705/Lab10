@@ -9,7 +9,6 @@ public class SudokuBoard {
         return board[row][col];
     }
 
-
     public int[][] getBoard() {
         return board;
     }

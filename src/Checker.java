@@ -1,6 +1,6 @@
 import java.util.List;
 
-public interface Checker extends Runnable {
+public interface Checker {
     List<DuplicateInfo> getResult();
 }
 

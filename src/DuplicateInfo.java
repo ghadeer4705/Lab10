@@ -15,7 +15,6 @@ public class DuplicateInfo {
         this.positions = new ArrayList<>(positions);
     }
 
-
     public void addPosition(int pos) {
         positions.add(pos);
     }
