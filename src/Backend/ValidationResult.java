@@ -36,9 +36,28 @@ public class ValidationResult {
         }
         return true;
     }
+    public String getState(SudokuBoard sb) {
+        boolean completed = isCompleted(sb);
+        boolean valid = isValid();
+        if (!completed) {
+            if (valid) {
+                return "VALID";
+            } else {
+                return "INVALID";
+            }
+        } else {
+            if (valid) {
+                return "VALID";
+            } else {
+                return "INVALID";
+            }
+        }
+    }
 
     public void printFinalResult(SudokuBoard sb) {
-        if (isCompleted(sb)) {
+        String status = getState(sb);
+        System.out.println(status);
+       /* if (isCompleted(sb)) {
             System.out.println("COMPLETED");
             return;
         }
@@ -47,6 +66,14 @@ public class ValidationResult {
             return;
         } else {
             System.out.println("INVALID");
+            for (DuplicateInfo d : rowErrors) System.out.println(d.errorFormat());
+            System.out.println("----------------------------------------");
+            for (DuplicateInfo d : columnErrors) System.out.println(d.errorFormat());
+            System.out.println("----------------------------------------");
+            for (DuplicateInfo d : boxErrors) System.out.println(d.errorFormat());
+        }
+    }*/
+        if (status.equals("INVALID")) {
             for (DuplicateInfo d : rowErrors) System.out.println(d.errorFormat());
             System.out.println("----------------------------------------");
             for (DuplicateInfo d : columnErrors) System.out.println(d.errorFormat());
