@@ -14,7 +14,7 @@ public class ControllerFacade implements Viewable {
     private GameSolver solver;
 
     public ControllerFacade() {
-        storing = new GameStoring();
+        storing = GameStoring.getInstance();
         generator = new GameGenerator();
         solver = new GameSolver();
     }
@@ -93,7 +93,7 @@ public class ControllerFacade implements Viewable {
         int newVal = Integer.parseInt(parts[2]);
         int prev = Integer.parseInt(parts[3]);
 
-        GameLogger logger = new GameLogger();
+        GameLogger logger = GameLogger.getInstance();
         logger.logMove(row, col, newVal, prev);
     }
 }

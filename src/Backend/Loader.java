@@ -7,7 +7,7 @@ public class Loader {
     private GameStoring storage;
 
     public Loader() {
-        this.storage = new GameStoring();
+        this.storage =GameStoring.getInstance();
     }
     public SudokuBoard loadIncompleteGame() throws NotFoundException {
         return storage.loadCurrentGame();

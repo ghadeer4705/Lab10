@@ -13,6 +13,8 @@ import java.util.Random;
 
 //for storing and loading games
 public class GameStoring {
+    //singleton instance
+    private static final GameStoring instance = new GameStoring();
     private static final String BASE_DIR = "sudoku";
     private static final String EASY_DIR = BASE_DIR + "/easy";
     private static final String MEDIUM_DIR = BASE_DIR + "/medium";
@@ -23,6 +25,10 @@ public class GameStoring {
 
     public GameStoring() {
         createFolders();
+    }
+
+    public static GameStoring getInstance() {
+        return instance;
     }
 
     //create hierarchy folders
