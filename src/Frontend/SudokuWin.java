@@ -13,7 +13,7 @@ public class SudokuWin extends javax.swing.JFrame {
     /**
      * Creates new form SudokuWin
      */
-    public SudokuWin() {
+    public SudokuWin(Controllable controller, int[][] board) {
         initComponents();
     }
 
@@ -72,7 +72,7 @@ public class SudokuWin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SudokuWin().setVisible(true);
+            //   new SudokuWin(controller, board).setVisible(true);
             }
         });
     }

@@ -13,7 +13,7 @@ public class MainGameWin extends javax.swing.JFrame {
     /**
      * Creates new form MainGameWin
      */
-    public MainGameWin() {
+    public MainGameWin(Controllable controller) {
         initComponents();
     }
 
@@ -125,7 +125,7 @@ public class MainGameWin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainGameWin().setVisible(true);
+                //new MainGameWin(controller).setVisible(true);
             }
         });
     }
