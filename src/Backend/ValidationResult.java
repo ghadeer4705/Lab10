@@ -40,11 +40,7 @@ public class ValidationResult {
         boolean completed = isCompleted(sb);
         boolean valid = isValid();
         if (!completed) {
-            if (valid) {
-                return "VALID";
-            } else {
-                return "INVALID";
-            }
+            return "INCOMPLETE";
         } else {
             if (valid) {
                 return "VALID";
@@ -54,25 +50,12 @@ public class ValidationResult {
         }
     }
 
+   /* public List<int[][]> getInValidPositions(){
+    }*/
+
     public void printFinalResult(SudokuBoard sb) {
         String status = getState(sb);
         System.out.println(status);
-       /* if (isCompleted(sb)) {
-            System.out.println("COMPLETED");
-            return;
-        }
-       else if (isValid()) {
-            System.out.println("VALID");
-            return;
-        } else {
-            System.out.println("INVALID");
-            for (DuplicateInfo d : rowErrors) System.out.println(d.errorFormat());
-            System.out.println("----------------------------------------");
-            for (DuplicateInfo d : columnErrors) System.out.println(d.errorFormat());
-            System.out.println("----------------------------------------");
-            for (DuplicateInfo d : boxErrors) System.out.println(d.errorFormat());
-        }
-    }*/
         if (status.equals("INVALID")) {
             for (DuplicateInfo d : rowErrors) System.out.println(d.errorFormat());
             System.out.println("----------------------------------------");

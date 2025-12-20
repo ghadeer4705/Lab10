@@ -7,11 +7,11 @@ import java.util.Random;
 import java.util.Set;
 public class RandomPairs {
     // Range 0..80 for both x and y
-    private static final int MAX_COORD = 80;
+    private static final int MAX_COORD = 8;
     private static final int MAX_UNIQUE_PAIRS = (MAX_COORD + 1) * (MAX_COORD + 1);
     private final Random random;
     public RandomPairs() {
-        this.random = new Random();
+        this.random = new Random(System.currentTimeMillis());
 
     }
     /**
