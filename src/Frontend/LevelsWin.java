@@ -14,6 +14,7 @@ public class LevelsWin extends javax.swing.JFrame {
     public LevelsWin(Controllable controller) {
         this.controller = controller;
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
