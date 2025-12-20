@@ -17,8 +17,9 @@ public class GameStoring {
     private static final String EASY_DIR = BASE_DIR + "/easy";
     private static final String MEDIUM_DIR = BASE_DIR + "/medium";
     private static final String HARD_DIR = BASE_DIR + "/hard";
-    private static final String CURRENT_GAME_FILE = BASE_DIR + "/current_game/game.csv";
-    private static final String LOG_FILE = CURRENT_GAME_FILE + "/game.log";
+    private static final String CURRENT_GAME_DIR = BASE_DIR + "/current_game";
+    private static final String CURRENT_GAME_FILE = CURRENT_GAME_DIR + "/game.csv";
+    private static final String LOG_FILE = CURRENT_GAME_DIR + "/game.log";
 
     public GameStoring() {
         createFolders();
@@ -30,7 +31,7 @@ public class GameStoring {
             Files.createDirectories(Paths.get(EASY_DIR));
             Files.createDirectories(Paths.get(MEDIUM_DIR));
             Files.createDirectories(Paths.get(HARD_DIR));
-            Files.createDirectories(Paths.get(CURRENT_GAME_FILE));
+            Files.createDirectories(Paths.get(CURRENT_GAME_DIR));
 
         } catch (Exception e) {
             e.printStackTrace();

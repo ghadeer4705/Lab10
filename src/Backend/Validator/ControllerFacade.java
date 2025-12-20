@@ -21,7 +21,7 @@ public class ControllerFacade {
 
     //fel bedaya to check available games
     public Catalog getCatalog() {
-        return storage.catalog();
+        return storage.getCatalog();
     }
 
     //load a random game based on difficulty
