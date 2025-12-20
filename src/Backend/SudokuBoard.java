@@ -28,7 +28,7 @@ public class SudokuBoard {
         }
 
     }
-
+    // Deep copy method
     public SudokuBoard copy(){
         return new SudokuBoard(this);
     }

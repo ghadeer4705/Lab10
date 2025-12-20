@@ -1,5 +1,8 @@
 package Backend;
 
+import Exceptions.NotFoundException;
+
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -67,4 +70,24 @@ public class GameStoring {
         String filePath = dir + "/" + fileName + ".csv";
         saveToCSV(filePath, board);
     }
+
+    public SudokuBoard loadGame(String difficulty, String filename) throws NotFoundException {
+        String dir = getDifficultyDirectory(difficulty);
+        String filepath = dir + "/" + filename + ".csv";
+
+        File file = new File(filepath);
+
+        if (!file.exists()) {
+            throw new NotFoundException("File not found: " + filepath);
+        }
+
+        int [][] grid = CSVFileReader.readFromFile(filepath);
+        return new SudokuBoard(grid);
+    }
+
+    public SudokuBoard loadCurrentGame(String difficulty) throws NotFoundException {
+
+
+    }
+
 }
