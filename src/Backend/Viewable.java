@@ -4,7 +4,7 @@ import Exceptions.InvalidGame;
 import Exceptions.NotFoundException;
 import Exceptions.SolutionInvalidException;
 import java.io.IOException;
-
+import Backend.Catalog;
 
 public interface Viewable {
     Catalog getCatalog();
