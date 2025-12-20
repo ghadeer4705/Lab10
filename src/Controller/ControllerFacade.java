@@ -28,11 +28,20 @@ public class ControllerFacade implements Viewable {
     //loads a game by difficulty
     @Override
     public Game getGame(DifficultyEnum level) throws NotFoundException {
-        String diffFolder = switch (level) {
-            case EASY -> "easy";
-            case MEDIUM -> "medium";
-            case HARD -> "hard";
-        };
+        String diffFolder;
+        switch(level) {
+            case EASY:
+                diffFolder = "easy";
+                break;
+            case MEDIUM:
+                diffFolder = "medium";
+                break;
+            case HARD:
+                diffFolder = "hard";
+                break;
+            default:
+                diffFolder = "easy"; // default, just in case
+        }
         SudokuBoard board = storing.loadGame(diffFolder, "game1");
         return new Game(board.getBoard());
     }
