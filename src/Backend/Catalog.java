@@ -1,9 +1,9 @@
 package Backend;
-
-class Catalog
+//meno n3rf law fy game mawgoda wla la2 w law fy kol mode game mawgoda wla la2
+public class Catalog
 {
-     private boolean current; // True if there is a game in progress, False otherwise.
-   private boolean allModesExist; // True if there is at least one game available for each
+    private boolean current; // True if there is a game in progress, False otherwise.
+   private boolean allModesExist; // True if there is at least one game available for each mode, False otherwise.
 
     public Catalog(){
         this.current = false;

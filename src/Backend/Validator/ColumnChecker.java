@@ -1,4 +1,5 @@
 package Backend.Validator;
+import Backend.SudokuBoard;
 
 import java.util.ArrayList;
 import java.util.List;

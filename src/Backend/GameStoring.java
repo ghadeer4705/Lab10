@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
+//for storing and loading games
 public class GameStoring {
     private static final String BASE_DIR = "sudoku";
     private static final String EASY_DIR = BASE_DIR + "/easy";
@@ -19,12 +19,11 @@ public class GameStoring {
     private static final String LOG_FILE = CURRENT_GAME_FILE + "/game.log";
 
     public GameStoring() {
-        createFoldersHierarchy();
-
+        createFolders();
     }
 
     //create hierarchy folders
-    public void createFoldersHierarchy() {
+    public void createFolders() {
         try {
             Files.createDirectories(Paths.get(EASY_DIR));
             Files.createDirectories(Paths.get(MEDIUM_DIR));
@@ -48,7 +47,7 @@ public class GameStoring {
                 throw new IllegalArgumentException("Invalid difficulty level: " + difficulty);
         }
     }
-
+    //save a gameboard to csv file
     public void saveToCSV(String filePath, SudokuBoard board) throws IOException {
         try (PrintWriter printWriter = new PrintWriter(new FileWriter(filePath))) {
             int[][] grid = board.getBoard();
@@ -86,7 +85,7 @@ public class GameStoring {
         return new SudokuBoard(grid);
     }
 
-    public SudokuBoard loadCurrentGame(String difficulty) throws NotFoundException {
+    public SudokuBoard loadCurrentGame() throws NotFoundException {
         File file = new File(CURRENT_GAME_FILE);
         if (!file.exists()) {
             throw new NotFoundException("Current game file not found: " + CURRENT_GAME_FILE);
@@ -113,43 +112,25 @@ public class GameStoring {
         }
     }
 
-    public void deleteCurrentGame(String difficulty) throws NotFoundException {
-        File currentGame = new File(CURRENT_GAME_FILE);
-        File logGame = new File(LOG_FILE);
-        if (currentGame.exists()) {
-            currentGame.delete();
-        }
-        if (logGame.exists()) {
-            logGame.delete();
-        }
+    public void deleteCurrentGame() throws NotFoundException {
+       new File(CURRENT_GAME_FILE).delete();
+       new  File(LOG_FILE).delete();
     }
 
-    public Catalog catalog() {
+    public Catalog getCatalog() {
         boolean hasCurrentGame = new File(CURRENT_GAME_FILE).exists();
-        boolean hasEasyGames = new File(EASY_DIR).listFiles().length > 0;
-        boolean hasMediumGames = new File(MEDIUM_DIR).listFiles().length > 0;
-        boolean hasHardGames = new File(HARD_DIR).listFiles().length > 0;
+        boolean hasEasyGames = hasGames(EASY_DIR);
+        boolean hasMediumGames =hasGames(MEDIUM_DIR);
+        boolean hasHardGames = hasGames(HARD_DIR);
         boolean allModesExist = hasEasyGames && hasMediumGames && hasHardGames;
         return new Catalog(hasCurrentGame, allModesExist);
     }
 
-    private boolean hasGamesInDirectory(String directoryPath) {
+    private boolean hasGames(String directoryPath) {
         File dir = new File(directoryPath);
         File[] files = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".csv"));
         return files != null && files.length > 0;
     }
 
-    public String getRandomGameFilePath(String difficulty) throws NotFoundException {
-        String dir = getDifficultyDirectory(difficulty);
-        File folder = new File(dir);
-        File[] files = folder.listFiles((d, name) -> name.toLowerCase().endsWith(".csv"));
-
-        if (files == null || files.length == 0) {
-            throw new NotFoundException("No games found in directory: " + dir);
-        }
-
-        int randomIndex = (int) (Math.random() * files.length);
-        return files[randomIndex].getAbsolutePath();
-    }
 
 }

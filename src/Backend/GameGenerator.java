@@ -7,7 +7,7 @@ import Backend.Validator.Validator;
 import Exceptions.SolutionInvalidException;
 
 import java.util.List;
-
+//to generate Sudoku game boards with varying difficulty levels
 public class GameGenerator {
 
     private Validator validator;
@@ -28,7 +28,7 @@ public class GameGenerator {
         }
     }
 
-    //to generate the game board by removing numbers from the solution
+    //generate game by removing random cells
     public SudokuBoard generateGame(SudokuBoard board, int CellsToRemove) {
         SudokuBoard GameBoard = board.copy();
 
@@ -37,8 +37,8 @@ public class GameGenerator {
         List<int[]> pairs = randomPairs.generateDistinctPairs(CellsToRemove);
 
         for(int [] pair : pairs) {
-            int row = pair[0] % 9;
-            int col = pair[1] % 9;
+            int row = pair[0] ;
+            int col = pair[1] ;
             GameBoard.setIndex(row, col, 0);
         }
 

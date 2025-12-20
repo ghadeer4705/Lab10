@@ -4,13 +4,13 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+//reponsible for undo functionality
 public class GameLogger {
     private static final String LOG_FILE ="sudoku/current_game/game.log";
 
-    public void logMove(int row ,int column , int newValue , int currentValue, int preValue) throws IOException {
+    public void logMove(int row ,int column , int newValue , int preValue) throws IOException {
         try(PrintWriter out = new PrintWriter(new FileWriter(LOG_FILE,true))){
-            out.println(row+","+column+","+newValue+","+currentValue+","+preValue);
+            out.println(row+","+column+","+newValue+","+preValue);
         }
     }
 
@@ -27,6 +27,22 @@ public class GameLogger {
                 Integer.parseInt(parts[2]),Integer.parseInt(parts[3]),
         };
 
+    }
+
+    //for the undo functionality
+    public void removeLastMove() throws IOException {
+        List<String> lines = readAllLines();
+
+        if (lines.isEmpty()){
+            return;
+        }
+        lines.remove(lines.size() - 1);
+
+        try (PrintWriter out = new PrintWriter(new FileWriter(LOG_FILE))) {
+            for (String line : lines) {
+                out.println(line);
+            }
+        }
     }
     private List<String> readAllLines() throws IOException {
         List <String> lines = new ArrayList<>();

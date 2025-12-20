@@ -41,16 +41,15 @@ public class ValidationResult {
     public String getState(SudokuBoard sb) {
         boolean completed = isCompleted(sb);
         boolean valid = isValid();
-        if (!completed) {
-            return "INCOMPLETE";
-        } else {
-            if (valid) {
-                return "VALID";
-            } else {
-                return "INVALID";
-            }
+        if (!isValid()) {
+            return "INVALID";
         }
+        if (!isCompleted(sb)) {
+            return "INCOMPLETE";
+        }
+                return "VALID";
     }
+
 
    /* public List<int[][]> getInValidPositions(){
     }*/
