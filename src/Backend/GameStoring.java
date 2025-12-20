@@ -9,13 +9,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Random;
+
 //for storing and loading games
 public class GameStoring {
     private static final String BASE_DIR = "sudoku";
     private static final String EASY_DIR = BASE_DIR + "/easy";
     private static final String MEDIUM_DIR = BASE_DIR + "/medium";
     private static final String HARD_DIR = BASE_DIR + "/hard";
-    private static final String CURRENT_GAME_FILE = BASE_DIR + "/current_game";
+    private static final String CURRENT_GAME_FILE = BASE_DIR + "/current_game/game.csv";
     private static final String LOG_FILE = CURRENT_GAME_FILE + "/game.log";
 
     public GameStoring() {
@@ -131,6 +133,22 @@ public class GameStoring {
         File[] files = dir.listFiles((d, name) -> name.toLowerCase().endsWith(".csv"));
         return files != null && files.length > 0;
     }
+    public String getRandomGameFilePath(String difficulty) throws NotFoundException {
+        String dirPath = getDifficultyDirectory(difficulty);
+        File dir = new File(dirPath);
+
+        File[] files = dir.listFiles((d, name) -> name.endsWith(".csv"));
+
+        if (files == null || files.length == 0) {
+            throw new NotFoundException("No games found for difficulty: " + difficulty);
+        }
+
+        Random random = new Random();
+        File selectedFile = files[random.nextInt(files.length)];
+
+        return selectedFile.getAbsolutePath();
+    }
+
 
 
 }
