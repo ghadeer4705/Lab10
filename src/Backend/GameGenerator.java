@@ -1,6 +1,9 @@
 package Backend;
 
 
+import Backend.Validator.Mode0Validator;
+import Backend.Validator.ValidationResult;
+import Backend.Validator.Validator;
 import Exceptions.SolutionInvalidException;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package Backend;
+package Backend.Validator;
 
 import java.io.File;
 import java.nio.file.Files;

@@ -1,4 +1,6 @@
-package Backend;
+package Backend.Validator;
+
+import Backend.SudokuBoard;
 
 public class Mode0Validator implements Validator {
     @Override
