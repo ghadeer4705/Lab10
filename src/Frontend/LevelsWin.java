@@ -135,7 +135,7 @@ public class LevelsWin extends javax.swing.JFrame {
     }//GEN-LAST:event_HardActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new MainGameWin(controller).setVisible(true);
+        new MainGameWin().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
