@@ -6,14 +6,14 @@ import java.awt.event.*;
 
 public class SudokuWin extends JFrame {
 
-    private View view; // Changed from Controllable to View to access performUndo
+    private View view;
     private int[][] board;
     private JTextField[][] cells;
-    private JButton btnVerify, btnSolve, btnUndo;
-    private boolean[][] originalCells; // Track which cells are pre-filled
+    private JButton btnVerify, btnSolve, btnUndo, btnBack;
+    private boolean[][] originalCells;
 
     public SudokuWin(Controllable controller, int[][] board) {
-        this.view = (View) controller; // Cast to access helper methods
+        this.view = (View) controller;
         this.board = board;
         this.originalCells = new boolean[9][9];
         initComponents();
@@ -23,7 +23,7 @@ public class SudokuWin extends JFrame {
     private void initComponents() {
         setTitle("Sudoku Game");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(650, 650);
+        setSize(650, 700);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
@@ -53,13 +53,11 @@ public class SudokuWin extends JFrame {
                     @Override
                     public void keyTyped(KeyEvent e) {
                         char c = e.getKeyChar();
-                        // Only allow digits 1-9 or backspace/delete
                         if (!Character.isDigit(c) || c == '0') {
                             if (c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
                                 e.consume();
                             }
                         }
-                        // Only allow single digit
                         String currentText = cell.getText();
                         if (currentText.length() >= 1 && Character.isDigit(c)) {
                             e.consume();
@@ -73,7 +71,6 @@ public class SudokuWin extends JFrame {
                             int val = text.isEmpty() ? 0 : Integer.parseInt(text);
                             int prev = board[row][col];
 
-                            // Only log if value actually changed
                             if (val != prev) {
                                 board[row][col] = val;
                                 view.logUserAction(new UserAction(row, col, val, prev));
@@ -93,14 +90,19 @@ public class SudokuWin extends JFrame {
         }
 
         // Button Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
         buttonPanel.setBackground(new Color(240, 240, 240));
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        // Top row buttons (game actions)
+        JPanel topRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        topRow.setBackground(new Color(240, 240, 240));
 
         btnVerify = new JButton("Verify");
         btnSolve = new JButton("Solve");
         btnUndo = new JButton("Undo");
 
-        // Style buttons
+        // Style action buttons
         for (JButton btn : new JButton[]{btnVerify, btnSolve, btnUndo}) {
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setPreferredSize(new Dimension(120, 40));
@@ -110,9 +112,24 @@ public class SudokuWin extends JFrame {
         btnSolve.setBackground(new Color(100, 255, 180));
         btnUndo.setBackground(new Color(255, 180, 100));
 
-        buttonPanel.add(btnVerify);
-        buttonPanel.add(btnSolve);
-        buttonPanel.add(btnUndo);
+        topRow.add(btnVerify);
+        topRow.add(btnSolve);
+        topRow.add(btnUndo);
+
+        // Bottom row (back button)
+        JPanel bottomRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        bottomRow.setBackground(new Color(240, 240, 240));
+
+        btnBack = new JButton("← Back to Main Menu");
+        btnBack.setFont(new Font("Arial", Font.BOLD, 14));
+        btnBack.setPreferredSize(new Dimension(250, 40));
+        btnBack.setBackground(new Color(200, 200, 200));
+        btnBack.setForeground(Color.DARK_GRAY);
+
+        bottomRow.add(btnBack);
+
+        buttonPanel.add(topRow);
+        buttonPanel.add(bottomRow);
 
         add(boardPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
@@ -121,6 +138,7 @@ public class SudokuWin extends JFrame {
         btnVerify.addActionListener(e -> verifyBoard());
         btnSolve.addActionListener(e -> solveBoard());
         btnUndo.addActionListener(e -> undoAction());
+        btnBack.addActionListener(e -> backToMainMenu());
 
         btnSolve.setEnabled(false);
     }
@@ -152,21 +170,20 @@ public class SudokuWin extends JFrame {
 
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                if (!originalCells[i][j]) { // Only color editable cells
+                if (!originalCells[i][j]) {
                     if (board[i][j] == 0) {
                         cells[i][j].setBackground(Color.YELLOW);
                         incompleteCount++;
                     } else if (!result[i][j]) {
-                        cells[i][j].setBackground(new Color(255, 100, 100)); // Light red
+                        cells[i][j].setBackground(new Color(255, 100, 100));
                         hasErrors = true;
                     } else {
-                        cells[i][j].setBackground(new Color(100, 255, 100)); // Light green
+                        cells[i][j].setBackground(new Color(100, 255, 100));
                     }
                 }
             }
         }
 
-        // Show appropriate message
         if (incompleteCount > 0) {
             JOptionPane.showMessageDialog(this,
                     "Board is INCOMPLETE\n" + incompleteCount + " cells remaining.",
@@ -179,7 +196,6 @@ public class SudokuWin extends JFrame {
             JOptionPane.showMessageDialog(this,
                     "🎉 Congratulations! Board is VALID!\nPuzzle completed successfully!",
                     "Victory!", JOptionPane.INFORMATION_MESSAGE);
-            // Close game and return to main menu
             this.dispose();
             new MainGameWin().setVisible(true);
         }
@@ -191,14 +207,13 @@ public class SudokuWin extends JFrame {
         try {
             int[][] solved = view.solveGame(board);
 
-            // Apply solution
             for (int[] move : solved) {
                 int r = move[0];
                 int c = move[1];
                 int val = move[2];
                 board[r][c] = val;
                 cells[r][c].setText(String.valueOf(val));
-                cells[r][c].setBackground(new Color(150, 200, 255)); // Light blue for solved
+                cells[r][c].setBackground(new Color(150, 200, 255));
             }
 
             JOptionPane.showMessageDialog(this,
@@ -215,10 +230,8 @@ public class SudokuWin extends JFrame {
 
     private void undoAction() {
         try {
-            // Call the helper method in View to send undo signal
             view.performUndo();
 
-            // Reload board from storage
             int[][] currentBoard = view.getGame('C');
             this.board = currentBoard;
             loadBoard(currentBoard);
@@ -234,6 +247,19 @@ public class SudokuWin extends JFrame {
         }
     }
 
+    private void backToMainMenu() {
+        int choice = JOptionPane.showConfirmDialog(this,
+                "Are you sure you want to go back?\nYour progress will be saved.",
+                "Back to Main Menu",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE);
+
+        if (choice == JOptionPane.YES_OPTION) {
+            this.dispose();
+            new MainGameWin().setVisible(true);
+        }
+    }
+
     private void updateSolveButtonState() {
         int emptyCount = 0;
         for (int[] row : board) {
@@ -241,7 +267,6 @@ public class SudokuWin extends JFrame {
                 if (val == 0) emptyCount++;
             }
         }
-        // Enable solve button only when exactly 5 cells empty (lab requirement)
         btnSolve.setEnabled(emptyCount == 5);
     }
 }
