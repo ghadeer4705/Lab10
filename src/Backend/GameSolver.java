@@ -5,9 +5,10 @@ import java.util.List;
 
 public class GameSolver implements SolverObserver {
 
-    private volatile int[][] solution;
+    private volatile int[][] partialSolution; // الخانات الفاضية اللي اتحلت
     private List<SolverWorker> workers;
 
+    // هاي الطريقة هترجع board كامل
     public int[][] solve(SudokuBoard board) {
 
         List<int[]> emptyCells = getEmptyCells(board);
@@ -44,13 +45,24 @@ public class GameSolver implements SolverObserver {
             } catch (InterruptedException ignored) {}
         }
 
-        return solution;
+        if (partialSolution == null) return null;
+
+        // دمج partial solution مع board الأصلي
+        int[][] solvedBoard = board.copy().getBoard();
+        for (int i = 0; i < partialSolution.length; i++) {
+            int r = partialSolution[i][0];
+            int c = partialSolution[i][1];
+            int val = partialSolution[i][2];
+            solvedBoard[r][c] = val;
+        }
+
+        return solvedBoard;
     }
 
     @Override
     public void onSolutionFound(int[][] solution) {
-        if (this.solution == null) {
-            this.solution = solution;
+        if (this.partialSolution == null) {
+            this.partialSolution = solution;
 
             // فورًا اطلب من كل worker يوقف نفسه
             for (SolverWorker w : workers) {
