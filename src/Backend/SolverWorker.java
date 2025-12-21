@@ -8,25 +8,27 @@ public class SolverWorker implements Runnable {
     private final List<int[]> emptyCells;
     private final PermutationIterator iterator;
     private final SolverObserver observer;
-    private final SharedStopFlag stopFlag;
+    private boolean stopRequested = false; // بدل SharedStopFlag
 
     public SolverWorker(
             SudokuBoard board,
             List<int[]> emptyCells,
             PermutationIterator iterator,
-            SolverObserver observer,
-            SharedStopFlag stopFlag
+            SolverObserver observer
     ) {
         this.board = board;
         this.emptyCells = emptyCells;
         this.iterator = iterator;
         this.observer = observer;
-        this.stopFlag = stopFlag;
+    }
+
+    public void requestStop() {
+        this.stopRequested = true;
     }
 
     @Override
     public void run() {
-        while (iterator.hasNext() && !stopFlag.isStopped()) {
+        while (iterator.hasNext() && !stopRequested) {
 
             int[] guess = iterator.next();
 
@@ -38,7 +40,6 @@ public class SolverWorker implements Runnable {
             }
 
             if (board.isValid()) {
-                stopFlag.stop();
                 observer.onSolutionFound(buildSolution());
                 return;
             }
