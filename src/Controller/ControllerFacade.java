@@ -79,8 +79,7 @@ public class ControllerFacade implements Viewable {
         }
 
         // Generate difficulty levels
-        SudokuBoard[] levels = generator.generateDifficultyLevels(board);
-
+       /*SudokuBoard[] levels = generator.generateDifficultyLevels(board);
 
         try {
             storing.saveGameToDifficultyFolder("easy", levels[0], "game1");
@@ -88,6 +87,17 @@ public class ControllerFacade implements Viewable {
             storing.saveGameToDifficultyFolder("hard", levels[2], "game1");
         } catch (IOException e) {
             throw new SolutionInvalidException("Error saving generated games");
+        }*/
+      for (int i = 1; i <= 3; i++) {
+            SudokuBoard[] levels = generator.generateDifficultyLevels(board);
+            try {
+                storing.saveGameToDifficultyFolder("easy", levels[0], "game" + i);
+                storing.saveGameToDifficultyFolder("medium", levels[1], "game" + i);
+                storing.saveGameToDifficultyFolder("hard", levels[2], "game" + i);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
         }
     }
 
@@ -238,4 +248,5 @@ public class ControllerFacade implements Viewable {
             throw new IOException("Undo failed: " + e.getMessage());
         }
     }
+
 }
