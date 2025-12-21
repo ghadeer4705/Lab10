@@ -33,4 +33,47 @@ public class SudokuBoard {
         return new SudokuBoard(this);
     }
 
+    public boolean isValid() {
+        // Check rows
+        for (int r = 0; r < 9; r++) {
+            boolean[] found = new boolean[10]; // index 1-9
+            for (int c = 0; c < 9; c++) {
+                int valu = board[r][c];
+                if (valu != 0) {
+                    if (found[valu]) return false; // duplicate found
+                    found[valu] = true;
+                }
+            }
+        }
+
+        // Check columns
+        for (int c = 0; c < 9; c++) {
+            boolean[] found = new boolean[10];
+            for (int r = 0; r < 9; r++) {
+                int valu = board[r][c];
+                if (valu != 0) {
+                    if (found[valu]) return false;
+                    found[valu] = true;
+                }
+            }
+        }
+
+        // Check boxes
+        for (int bRow = 0; bRow < 3; bRow++) {
+            for (int bCol = 0; bCol < 3; bCol++) {
+                boolean[] found = new boolean[10];
+                for (int r = bRow * 3; r < bRow * 3 + 3; r++) {
+                    for (int c = bCol * 3; c < bCol * 3 + 3; c++) {
+                        int valu = board[r][c];
+                        if (valu != 0) {
+                            if (found[valu]) return false;
+                            found[valu] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true; //valid
+    }
 }
