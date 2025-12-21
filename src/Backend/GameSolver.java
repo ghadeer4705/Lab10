@@ -3,72 +3,49 @@ package Backend;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameSolver implements SolverObserver {
+public class GameSolver {
 
-    private volatile int[][] partialSolution; // الخانات الفاضية اللي اتحلت
-    private List<SolverWorker> workers;
-
-    // هاي الطريقة هترجع board كامل
     public int[][] solve(SudokuBoard board) {
-
         List<int[]> emptyCells = getEmptyCells(board);
 
-        if (emptyCells.size() != 5) return null;
-
-        int total = (int) Math.pow(9, emptyCells.size());
-        int threads = 3;
-        int range = total / threads;
-
-        SolverThreadFactory factory = new SolverThreadFactory();
-        workers = new ArrayList<>();
-        List<Thread> running = new ArrayList<>();
-
-        for (int i = 0; i < threads; i++) {
-
-            int start = i * range;
-            int end = (i == threads - 1) ? total - 1 : start + range - 1;
-
-            SudokuBoard copy = board.copy();
-            PermutationIterator iterator = new PermutationIterator(start, end, emptyCells.size());
-
-            SolverWorker worker = new SolverWorker(copy, emptyCells, iterator, this);
-            workers.add(worker);
-
-            Thread t = factory.createThread(worker, i);
-            running.add(t);
-            t.start();
+        if (emptyCells.size() != 5) {
+            return null; // نشتغل بس على 5 خانات فاضية
         }
 
-        for (Thread t : running) {
-            try {
-                t.join();
-            } catch (InterruptedException ignored) {}
-        }
+        PermutationIterator iterator = new PermutationIterator(0, (int) Math.pow(9, 5) - 1, 5);
 
-        if (partialSolution == null) return null;
+        while (iterator.hasNext()) {
+            int[] guess = iterator.next();
 
-        // دمج partial solution مع board الأصلي
-        int[][] solvedBoard = board.copy().getBoard();
-        for (int i = 0; i < partialSolution.length; i++) {
-            int r = partialSolution[i][0];
-            int c = partialSolution[i][1];
-            int val = partialSolution[i][2];
-            solvedBoard[r][c] = val;
-        }
+            // نحط الأرقام في الخانات الفاضية
+            for (int i = 0; i < emptyCells.size(); i++) {
+                int r = emptyCells.get(i)[0];
+                int c = emptyCells.get(i)[1];
+                board.setIndex(r, c, guess[i]);
+            }
 
-        return solvedBoard;
-    }
+            if (board.isValid()) {
+                // لو board صح، نرجع الحل
+                int[][] solution = new int[5][3];
+                for (int i = 0; i < 5; i++) {
+                    int r = emptyCells.get(i)[0];
+                    int c = emptyCells.get(i)[1];
+                    solution[i][0] = r;
+                    solution[i][1] = c;
+                    solution[i][2] = board.getIndex(r, c);
+                }
+                return solution;
+            }
 
-    @Override
-    public void onSolutionFound(int[][] solution) {
-        if (this.partialSolution == null) {
-            this.partialSolution = solution;
-
-            // فورًا اطلب من كل worker يوقف نفسه
-            for (SolverWorker w : workers) {
-                w.requestStop();
+            // rollback
+            for (int i = 0; i < emptyCells.size(); i++) {
+                int r = emptyCells.get(i)[0];
+                int c = emptyCells.get(i)[1];
+                board.setIndex(r, c, 0);
             }
         }
+
+        return null; // لو مفيش حل
     }
 
     private List<int[]> getEmptyCells(SudokuBoard board) {
