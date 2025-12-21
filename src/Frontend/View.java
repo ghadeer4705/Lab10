@@ -36,6 +36,8 @@ public class View implements Controllable{
             case 'H':
                 difficulty = DifficultyEnum.HARD;
                 break;
+            case 'C': // Continue current game
+                return new Backend.Loader().loadIncompleteGame().getBoard();
             default:
                 throw new IllegalArgumentException("Invalid level: " + level);
         }

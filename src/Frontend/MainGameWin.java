@@ -8,6 +8,13 @@
  * @author Rodina Mohamed
  */
 package Frontend;
+
+import Exceptions.NotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.*;
+
 public class MainGameWin extends javax.swing.JFrame {
 
     private Controllable controller;
@@ -91,6 +98,13 @@ public class MainGameWin extends javax.swing.JFrame {
 
     private void ContinueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ContinueActionPerformed
         // TODO add your handling code here:
+        try {
+            int[][] board = controller.getGame('C');  // 'C' for Continue
+            new SudokuWin(controller, board).setVisible(true);
+            this.dispose();
+        } catch (NotFoundException e) {
+            JOptionPane.showMessageDialog(this, "No current game to continue.");
+        }
     }//GEN-LAST:event_ContinueActionPerformed
 
     private void StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartActionPerformed
