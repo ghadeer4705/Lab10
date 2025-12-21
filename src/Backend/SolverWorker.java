@@ -2,13 +2,13 @@ package Backend;
 
 import java.util.List;
 
-public class SolverWorker implements Runnable {
+public class SolverWorker implements Runnable {//<<Subject>>
 
     private final SudokuBoard board;
     private final List<int[]> emptyCells;
     private final PermutationIterator iterator;
-    private final SolverObserver observer;
-    private volatile boolean stopRequested = false;
+    private final SolverObserver observer;//notify
+    private volatile boolean stopRequested = false;// Ensures the worker thread sees updates immediately when stop is requested
 
     public SolverWorker(SudokuBoard board, List<int[]> emptyCells, PermutationIterator iterator, SolverObserver observer) {
         this.board = board;
@@ -26,28 +26,28 @@ public class SolverWorker implements Runnable {
         while (iterator.hasNext() && !stopRequested) {
             int[] guess = iterator.next();
 
-            // apply guess only on empty cells
+            //Only apply guess on empty cells
             for (int i = 0; i < emptyCells.size(); i++) {
                 int r = emptyCells.get(i)[0];
                 int c = emptyCells.get(i)[1];
                 board.setIndex(r, c, guess[i]);
             }
 
-            if (board.isValid()) {  // check full board validity
-                observer.onSolutionFound(buildSolution());
+            if (board.isValid()) {  //Check if full board is valid
+                observer.onSolutionFound(buildSolution());//notify observer
                 return;
             }
 
-            // rollback
-            for (int i = 0; i < emptyCells.size(); i++) {
+
+            for (int i = 0; i < emptyCells.size(); i++) {//Rollback changes if guess was invalid
                 int r = emptyCells.get(i)[0];
                 int c = emptyCells.get(i)[1];
-                board.setIndex(r, c, 0);
+                board.setIndex(r, c, 0);//Reset cell
             }
         }
     }
 
-    private int[][] buildSolution() {
+    private int[][] buildSolution() {//Build a 2D array representing the solution of empty cells
         int[][] result = new int[emptyCells.size()][3];
         for (int i = 0; i < emptyCells.size(); i++) {
             int r = emptyCells.get(i)[0];

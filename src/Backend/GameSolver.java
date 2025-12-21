@@ -9,7 +9,7 @@ public class GameSolver {
         List<int[]> emptyCells = getEmptyCells(board);
 
         if (emptyCells.size() != 5) {
-            return null; // نشتغل بس على 5 خانات فاضية
+            return null;
         }
 
         PermutationIterator iterator = new PermutationIterator(0, (int) Math.pow(9, 5) - 1, 5);
@@ -17,7 +17,7 @@ public class GameSolver {
         while (iterator.hasNext()) {
             int[] guess = iterator.next();
 
-            // نحط الأرقام في الخانات الفاضية
+
             for (int i = 0; i < emptyCells.size(); i++) {
                 int r = emptyCells.get(i)[0];
                 int c = emptyCells.get(i)[1];
@@ -25,7 +25,7 @@ public class GameSolver {
             }
 
             if (board.isValid()) {
-                // لو board صح، نرجع الحل
+
                 int[][] solution = new int[5][3];
                 for (int i = 0; i < 5; i++) {
                     int r = emptyCells.get(i)[0];
@@ -37,7 +37,7 @@ public class GameSolver {
                 return solution;
             }
 
-            // rollback
+
             for (int i = 0; i < emptyCells.size(); i++) {
                 int r = emptyCells.get(i)[0];
                 int c = emptyCells.get(i)[1];
@@ -45,7 +45,7 @@ public class GameSolver {
             }
         }
 
-        return null; // لو مفيش حل
+        return null;
     }
 
     private List<int[]> getEmptyCells(SudokuBoard board) {
