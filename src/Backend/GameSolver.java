@@ -6,18 +6,15 @@ import java.util.List;
 public class GameSolver implements SolverObserver {
 
     private volatile int[][] solution;
-    private List<SolverWorker> workers; // مهم: field عشان نقدر نوقفهم من callback
+    private List<SolverWorker> workers;
 
     public int[][] solve(SudokuBoard board) {
 
         List<int[]> emptyCells = getEmptyCells(board);
 
-        // ثابت على 5 خلايا فقط
-        if (emptyCells.size() != 5) {
-            return null;
-        }
+        if (emptyCells.size() != 5) return null;
 
-        int total = (int) Math.pow(9, 5); // ثابت على 5 خلايا
+        int total = (int) Math.pow(9, emptyCells.size());
         int threads = 3;
         int range = total / threads;
 
@@ -30,23 +27,17 @@ public class GameSolver implements SolverObserver {
             int start = i * range;
             int end = (i == threads - 1) ? total - 1 : start + range - 1;
 
-            SudokuBoard copy = new SudokuBoard(board.getBoard());
-            PermutationIterator iterator = new PermutationIterator(start, end, 5);
+            SudokuBoard copy = board.copy();
+            PermutationIterator iterator = new PermutationIterator(start, end, emptyCells.size());
 
-            SolverWorker worker = new SolverWorker(
-                    copy,
-                    emptyCells,
-                    iterator,
-                    this
-            );
-
+            SolverWorker worker = new SolverWorker(copy, emptyCells, iterator, this);
             workers.add(worker);
+
             Thread t = factory.createThread(worker, i);
             running.add(t);
             t.start();
         }
 
-        // انتظار جميع threads
         for (Thread t : running) {
             try {
                 t.join();
@@ -61,7 +52,7 @@ public class GameSolver implements SolverObserver {
         if (this.solution == null) {
             this.solution = solution;
 
-            // فورًا أطلب من كل worker يوقف نفسه
+            // فورًا اطلب من كل worker يوقف نفسه
             for (SolverWorker w : workers) {
                 w.requestStop();
             }

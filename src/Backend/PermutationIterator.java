@@ -11,7 +11,7 @@ public class PermutationIterator {
         this.start = start;
         this.end = end;
         this.current = start;
-        this.size = size;
+        this.size = size;  // في حالتنا دي size = 5
     }
 
     public boolean hasNext() {
@@ -23,7 +23,7 @@ public class PermutationIterator {
         int temp = current++;
 
         for (int i = size - 1; i >= 0; i--) {
-            guess[i] = (temp % 9) + 1;
+            guess[i] = (temp % 9) + 1;  // أرقام من 1 لـ 9
             temp /= 9;
         }
         return guess;
