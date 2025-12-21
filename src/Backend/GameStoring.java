@@ -63,15 +63,14 @@ public class GameStoring {
             for (int row = 0; row < 9; row++) {
                 for (int col = 0; col < 9; col++) {
                     printWriter.print(grid[row][col]);
-                    if (col < 8) {
-                        printWriter.print(",");
-                    }
-                    printWriter.println();
+                    if (col < 8) printWriter.print(",");
                 }
-
+                    printWriter.println();
             }
+
         }
     }
+
 
     //save a game to its difficulty folder
     public void saveGameToDifficultyFolder(String difficulty, SudokuBoard board, String fileName) throws IOException {

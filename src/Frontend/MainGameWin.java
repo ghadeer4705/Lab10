@@ -10,6 +10,8 @@
 package Frontend;
 
 import Exceptions.NotFoundException;
+import Exceptions.SolutionInvalidException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -25,7 +27,17 @@ public class MainGameWin extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         controller = new View();
+
+
+      try {
+        boolean[] catalog = controller.getCatalog();
+        if (!catalog[1]) {
+            controller.driveGames("sudoku.csv");
+        }
+    } catch (SolutionInvalidException e) {
+        JOptionPane.showMessageDialog(this, "Error generating games: " + e.getMessage());
     }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -108,9 +120,27 @@ public class MainGameWin extends javax.swing.JFrame {
     }//GEN-LAST:event_ContinueActionPerformed
 
     private void StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartActionPerformed
-        LevelsWin lw = new LevelsWin(controller);
-        lw.setVisible(true);
-        this.setVisible(false);
+        try {
+            boolean[] catalog = controller.getCatalog();
+            boolean anyAvailable = false;
+            for (boolean b : catalog) {
+                if (b) {
+                    anyAvailable = true;
+                    break;
+                }
+            }
+
+            if (!anyAvailable) {
+                controller.driveGames("games.txt");
+            }
+
+            LevelsWin lw = new LevelsWin(controller);
+            lw.setVisible(true);
+            this.setVisible(false);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error generating or loading games: " + e.getMessage());
+        }
     }//GEN-LAST:event_StartActionPerformed
 
     /**
