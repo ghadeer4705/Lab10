@@ -6,6 +6,7 @@ import java.util.List;
 public class GameSolver implements SolverObserver {
 
     private volatile int[][] solution;
+    private List<SolverWorker> workers; // مهم: field عشان نقدر نوقفهم من callback
 
     public int[][] solve(SudokuBoard board) {
 
@@ -21,7 +22,7 @@ public class GameSolver implements SolverObserver {
         int range = total / threads;
 
         SolverThreadFactory factory = new SolverThreadFactory();
-        List<SolverWorker> workers = new ArrayList<>();
+        workers = new ArrayList<>();
         List<Thread> running = new ArrayList<>();
 
         for (int i = 0; i < threads; i++) {
@@ -52,13 +53,6 @@ public class GameSolver implements SolverObserver {
             } catch (InterruptedException ignored) {}
         }
 
-        // طلب إيقاف باقي workers لو في حل موجود
-        if (solution != null) {
-            for (SolverWorker w : workers) {
-                w.requestStop();
-            }
-        }
-
         return solution;
     }
 
@@ -66,6 +60,11 @@ public class GameSolver implements SolverObserver {
     public void onSolutionFound(int[][] solution) {
         if (this.solution == null) {
             this.solution = solution;
+
+            // فورًا أطلب من كل worker يوقف نفسه
+            for (SolverWorker w : workers) {
+                w.requestStop();
+            }
         }
     }
 
