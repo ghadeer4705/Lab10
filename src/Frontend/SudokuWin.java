@@ -7,13 +7,14 @@ import java.awt.event.*;
 public class SudokuWin extends JFrame {
 
     private View view;
+    private ViewAdapter viewAdapter;
     private int[][] board;
     private JTextField[][] cells;
     private JButton btnVerify, btnSolve, btnUndo, btnBack;
     private boolean[][] originalCells;
 
     public SudokuWin(Controllable controller, int[][] board) {
-        this.view = (View) controller;
+        this.viewAdapter = (ViewAdapter) controller;
         this.board = board;
         this.originalCells = new boolean[9][9];
         initComponents();
@@ -73,7 +74,7 @@ public class SudokuWin extends JFrame {
 
                             if (val != prev) {
                                 board[row][col] = val;
-                                view.logUserAction(new UserAction(row, col, val, prev));
+                                viewAdapter.logUserAction(new UserAction(row, col, val, prev));
                             }
                             updateSolveButtonState();
                         } catch (Exception ex) {
@@ -164,7 +165,7 @@ public class SudokuWin extends JFrame {
     }
 
     private void verifyBoard() {
-        boolean[][] result = view.verifyGame(board);
+        boolean[][] result = viewAdapter.verifyGame(board);
         boolean hasErrors = false;
         int incompleteCount = 0;
 
@@ -197,7 +198,7 @@ public class SudokuWin extends JFrame {
                     "🎉 Congratulations! Board is VALID!\nPuzzle completed successfully!",
                     "Victory!", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
-            new MainGameWin().setVisible(true);
+            new MainGameWin(viewAdapter).setVisible(true);
         }
 
         updateSolveButtonState();
@@ -205,7 +206,7 @@ public class SudokuWin extends JFrame {
 
     private void solveBoard() {
         try {
-            int[][] solved = view.solveGame(board);
+            int[][] solved = viewAdapter.solveGame(board);
 
             for (int[] move : solved) {
                 int r = move[0];
@@ -230,9 +231,9 @@ public class SudokuWin extends JFrame {
 
     private void undoAction() {
         try {
-            view.performUndo();
+            viewAdapter.undo();
 
-            int[][] currentBoard = view.getGame('C');
+            int[][] currentBoard = viewAdapter.getGame('C');
             this.board = currentBoard;
             loadBoard(currentBoard);
 
@@ -256,7 +257,7 @@ public class SudokuWin extends JFrame {
 
         if (choice == JOptionPane.YES_OPTION) {
             this.dispose();
-            new MainGameWin().setVisible(true);
+            new MainGameWin(viewAdapter).setVisible(true);
         }
     }
 

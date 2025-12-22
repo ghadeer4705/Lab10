@@ -23,10 +23,10 @@ public class MainGameWin extends javax.swing.JFrame {
     /**
      * Creates new form MainGameWin
      */
-    public MainGameWin() {
+    public MainGameWin(Controllable controller) {
         initComponents();
         setLocationRelativeTo(null);
-        controller = new View();
+        this.controller = controller;
 
 
       try {
@@ -173,7 +173,9 @@ public class MainGameWin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainGameWin().setVisible(true);
+                Controller.Viewable controllerFacade = new Controller.ControllerFacade();
+                Controllable controller = new ViewAdapter(controllerFacade);
+                new MainGameWin(controller).setVisible(true);
             }
         });
     }

@@ -9,6 +9,7 @@ import java.util.List;
 
 public class ControllerFacade implements Viewable {
 
+    private DifficultyEnum currentDifficulty;
     private GameStoring storing;
     private GameGenerator generator;
     private GameSolver solver;
@@ -31,8 +32,9 @@ public class ControllerFacade implements Viewable {
     }
 
     //loads a game by difficulty
-    @Override
+   @Override
     public Game getGame(DifficultyEnum level) throws NotFoundException {
+        currentDifficulty = level;
         String diffFolder;
         switch(level) {
             case EASY:
@@ -49,14 +51,11 @@ public class ControllerFacade implements Viewable {
         }
         //SudokuBoard board = storing.loadGame(diffFolder, "game1");
         SudokuBoard board = new Loader().loadGameByDifficulty(diffFolder);
-
-        // Cache the board
         currentBoard = board;
-
-       //Save as current game
+       //save as current game
         try {
             storing.SaveCurrentGame(board);
-            // Clear log for new game
+            //clear log for new game
             logger.clearLog();
         } catch (IOException e) {
             throw new NotFoundException("Error saving current game: " + e.getMessage());
@@ -64,7 +63,6 @@ public class ControllerFacade implements Viewable {
 
         return new Game(board.getBoard());
     }
-
 
     //generates games from a source solution
     @Override
@@ -78,7 +76,7 @@ public class ControllerFacade implements Viewable {
             throw new SolutionInvalidException("Source solution is " + state + ". Must be VALID.");
         }
 
-        // Generate difficulty levels
+        //generate difficulty levels
        /*SudokuBoard[] levels = generator.generateDifficultyLevels(board);
 
         try {
@@ -126,7 +124,7 @@ public class ControllerFacade implements Viewable {
                     storing.deleteCurrentGame();
                     logger.clearLog();
                 } catch (IOException | NotFoundException e) {
-                    // Log but don't fail
+                    //log but don't fail
                     System.err.println("Failed to delete completed game: " + e.getMessage());
                 }
             }
@@ -140,7 +138,7 @@ public class ControllerFacade implements Viewable {
     public int[] solveGame(Game game) throws InvalidGame {
         SudokuBoard board = new SudokuBoard(game.getBoard());
 
-        // Check if exactly 5 cells are empty (lab requirement)
+        //check if exactly 5 cells are empty
         int emptyCount = 0;
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {

@@ -135,7 +135,7 @@ public class LevelsWin extends javax.swing.JFrame {
     }//GEN-LAST:event_HardActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new MainGameWin().setVisible(true);
+        new MainGameWin(controller).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -169,7 +169,8 @@ public class LevelsWin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Controllable controller = new View();
+                Controller.Viewable controllerFacade = new Controller.ControllerFacade();
+                Controllable controller = new ViewAdapter(controllerFacade);
                 new LevelsWin(controller).setVisible(true);
             }
         });

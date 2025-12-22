@@ -11,10 +11,11 @@ import Exceptions.SolutionInvalidException;
 
 import java.io.IOException;
 
-public class ControllerAdapter implements Controllable{
+public class ViewAdapter implements Controllable{
 
     private Viewable controller;
-    public ControllerAdapter(Viewable controller) {
+    public ViewAdapter(Viewable controller) {
+
         this.controller = controller;
     }
 
