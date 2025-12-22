@@ -3,49 +3,51 @@ package Backend;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameSolver {
+public class GameSolver implements SolverObserver {
 
-    public int[][] solve(SudokuBoard board) {
+    private int[][] solution = null;
+
+    public int[][] solve(SudokuBoard board) {//Facade
         List<int[]> emptyCells = getEmptyCells(board);
+        if (emptyCells.size() != 5) return null;
 
-        if (emptyCells.size() != 5) {
-            return null;
+        int totalPermutations = (int) Math.pow(9, 5);
+        int threadsCount = 3;
+        Thread[] threads = new Thread[threadsCount];
+
+        int rangeSize = totalPermutations / threadsCount;
+
+
+        for (int i = 0; i < threadsCount; i++) {
+            int start = i * rangeSize;
+            int end = (i == threadsCount - 1) ? totalPermutations - 1 : (start + rangeSize - 1);
+
+            SudokuBoard boardCopy = board.copy(); //Flyweight
+            PermutationIterator iterator = new PermutationIterator(start, end, 5);
+
+            SolverWorker worker = new SolverWorker(boardCopy, emptyCells, iterator, this);
+            threads[i] = new Thread(worker);
+            threads[i].start();
         }
 
-        PermutationIterator iterator = new PermutationIterator(0, (int) Math.pow(9, 5) - 1, 5);
 
-        while (iterator.hasNext()) {
-            int[] guess = iterator.next();
-
-
-            for (int i = 0; i < emptyCells.size(); i++) {
-                int r = emptyCells.get(i)[0];
-                int c = emptyCells.get(i)[1];
-                board.setIndex(r, c, guess[i]);
-            }
-
-            if (board.isValid()) {
-
-                int[][] solution = new int[5][3];
-                for (int i = 0; i < 5; i++) {
-                    int r = emptyCells.get(i)[0];
-                    int c = emptyCells.get(i)[1];
-                    solution[i][0] = r;
-                    solution[i][1] = c;
-                    solution[i][2] = board.getIndex(r, c);
-                }
-                return solution;
-            }
-
-
-            for (int i = 0; i < emptyCells.size(); i++) {
-                int r = emptyCells.get(i)[0];
-                int c = emptyCells.get(i)[1];
-                board.setIndex(r, c, 0);
-            }
+        while (solution == null) {
+            try { Thread.sleep(10); } catch (InterruptedException e) {}
         }
 
-        return null;
+
+        for (Thread t : threads) {
+            t.interrupt();
+        }
+
+        return solution;
+    }
+
+    @Override
+    public void onSolutionFound(int[][] solution) {
+        if (this.solution == null) {
+            this.solution = solution;
+        }
     }
 
     private List<int[]> getEmptyCells(SudokuBoard board) {
