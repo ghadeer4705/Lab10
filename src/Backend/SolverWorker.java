@@ -2,13 +2,12 @@ package Backend;
 
 import java.util.List;
 
-public class SolverWorker implements Runnable {//<<Subject>>
+public class SolverWorker implements Runnable {//Subject
 
     private final SudokuBoard board;
     private final List<int[]> emptyCells;
     private final PermutationIterator iterator;
-    private final SolverObserver observer;//notify
-    private volatile boolean stopRequested = false;// Ensures the worker thread sees updates immediately when stop is requested
+    private final SolverObserver observer;//Notify
 
     public SolverWorker(SudokuBoard board, List<int[]> emptyCells, PermutationIterator iterator, SolverObserver observer) {
         this.board = board;
@@ -17,13 +16,9 @@ public class SolverWorker implements Runnable {//<<Subject>>
         this.observer = observer;
     }
 
-    public void requestStop() {
-        this.stopRequested = true;
-    }
-
     @Override
     public void run() {
-        while (iterator.hasNext() && !stopRequested) {
+        while (iterator.hasNext() && !Thread.currentThread().isInterrupted()) {
             int[] guess = iterator.next();
 
             //Only apply guess on empty cells
@@ -33,13 +28,13 @@ public class SolverWorker implements Runnable {//<<Subject>>
                 board.setIndex(r, c, guess[i]);
             }
 
-            if (board.isValid()) {  //Check if full board is valid
-                observer.onSolutionFound(buildSolution());//notify observer
-                return;
+            if (board.isValid()) { //Checkk if full board is valid
+                observer.onSolutionFound(buildSolution());//Notify observer
+                return; //Stop el thread
             }
 
-
-            for (int i = 0; i < emptyCells.size(); i++) {//Rollback changes if guess was invalid
+            //Rollback is applied if guess was invalid
+            for (int i = 0; i < emptyCells.size(); i++) {
                 int r = emptyCells.get(i)[0];
                 int c = emptyCells.get(i)[1];
                 board.setIndex(r, c, 0);//Reset cell
@@ -47,7 +42,7 @@ public class SolverWorker implements Runnable {//<<Subject>>
         }
     }
 
-    private int[][] buildSolution() {//Build a 2D array representing the solution of empty cells
+    private int[][] buildSolution() {//Build a 2-D Array representing the solution of empty cells
         int[][] result = new int[emptyCells.size()][3];
         for (int i = 0; i < emptyCells.size(); i++) {
             int r = emptyCells.get(i)[0];
