@@ -151,6 +151,12 @@ public class ControllerFacade implements Viewable {
         }
 
         int[][] solution = solver.solve(board);
+
+        // Check if solution is null (board has duplicates or unsolvable)
+        if (solution == null) {
+            throw new InvalidGame("No solution found. The board contains errors or duplicates in the filled cells.");
+        }
+
 //nehawel mn 2D array le flat 1D array 3shan el frontend yesta3mlha b sohoula
         int[] flat = new int[solution.length * 3];
         for (int i = 0; i < solution.length; i++) {

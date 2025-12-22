@@ -12,7 +12,6 @@ public class SudokuWin extends JFrame {
     private JTextField[][] cells;
     private JButton btnVerify, btnSolve, btnUndo, btnBack;
     private boolean[][] originalCells;
-
     public SudokuWin(Controllable controller, int[][] board) {
         this.viewAdapter = (ViewAdapter) controller;
         this.board = board;
@@ -154,10 +153,11 @@ public class SudokuWin extends JFrame {
                     originalCells[i][j] = false;
                 } else {
                     cells[i][j].setText(String.valueOf(board[i][j]));
-                    cells[i][j].setEditable(false);
+                     cells[i][j].setEditable(false);
                     cells[i][j].setBackground(new Color(220, 220, 220));
                     cells[i][j].setForeground(Color.DARK_GRAY);
                     originalCells[i][j] = true;
+
                 }
             }
         }
@@ -179,7 +179,7 @@ public class SudokuWin extends JFrame {
                         cells[i][j].setBackground(new Color(255, 100, 100));
                         hasErrors = true;
                     } else {
-                        cells[i][j].setBackground(new Color(100, 255, 100));
+                            cells[i][j].setBackground(new Color(100, 255, 100)); // Green
                     }
                 }
             }

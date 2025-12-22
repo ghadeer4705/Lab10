@@ -56,7 +56,7 @@ public class ViewAdapter implements Controllable{
 
     }
 
-    @Override
+   /* @Override
     public boolean[][] verifyGame(int[][] game) {
         String state = controller.verifyGame(new Game(game));
         boolean[][] result = new boolean[9][9];
@@ -71,6 +71,62 @@ public class ViewAdapter implements Controllable{
                     result[i][j] = game[i][j] != 0;
         }
         return result;
+    }*/
+   public boolean[][] verifyGame(int[][] game) {
+       String state = controller.verifyGame(new Game(game));
+       boolean[][] result = new boolean[9][9];
+
+       if (state.equals("VALID")) {
+           // All cells are valid
+           for (int i = 0; i < 9; i++)
+               for (int j = 0; j < 9; j++)
+                   result[i][j] = true;
+       } else {
+           // Check each cell individually
+           for (int i = 0; i < 9; i++) {
+               for (int j = 0; j < 9; j++) {
+                   if (game[i][j] == 0) {
+                       result[i][j] = true; // Empty cells are "valid" (not wrong)
+                   } else {
+                       // Check if this specific cell violates Sudoku rules
+                       result[i][j] = isCellValid(game, i, j);
+                   }
+               }
+           }
+       }
+       return result;
+   }
+
+    private boolean isCellValid(int[][] board, int row, int col) {
+        int value = board[row][col];
+        if (value == 0) return true;
+
+        // Check row for duplicates
+        for (int c = 0; c < 9; c++) {
+            if (c != col && board[row][c] == value) {
+                return false;
+            }
+        }
+
+        // Check column for duplicates
+        for (int r = 0; r < 9; r++) {
+            if (r != row && board[r][col] == value) {
+                return false;
+            }
+        }
+
+        // Check 3x3 box for duplicates
+        int boxRow = (row / 3) * 3;
+        int boxCol = (col / 3) * 3;
+        for (int r = boxRow; r < boxRow + 3; r++) {
+            for (int c = boxCol; c < boxCol + 3; c++) {
+                if (r != row && c != col && board[r][c] == value) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override
