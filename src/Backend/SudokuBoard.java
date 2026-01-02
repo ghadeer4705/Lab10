@@ -3,13 +3,30 @@ package Backend;
 public class SudokuBoard {
     private int[][] board;
 
+
     public SudokuBoard(int[][] board) {
-        this.board = board;
+        this.board = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                this.board[i][j] = board[i][j];
+            }
+        }
+    }
+
+
+    public SudokuBoard(SudokuBoard copyBoard) {
+        this.board = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                this.board[i][j] = copyBoard.board[i][j];
+            }
+        }
     }
 
     public int getIndex(int row, int col) {
         return board[row][col];
     }
+
     public void setIndex(int row, int col, int value) {
         board[row][col] = value;
     }
@@ -18,30 +35,20 @@ public class SudokuBoard {
         return board;
     }
 
-    public SudokuBoard (SudokuBoard copyBoard){
-        this.board = new int[9][9];
-        for(int i =0 ; i <9 ; i++){
-            for(int j =0 ; j <9 ; j++){
-                this.board[i][j] = copyBoard.board[i][j];
 
-            }
-        }
-
-    }
-    // Deep copy method
-    public SudokuBoard copy(){
+    public SudokuBoard copy() {
         return new SudokuBoard(this);
     }
 
     public boolean isValid() {
         // Check rows
         for (int r = 0; r < 9; r++) {
-            boolean[] found = new boolean[10]; // index 1-9
+            boolean[] found = new boolean[10];
             for (int c = 0; c < 9; c++) {
-                int valu = board[r][c];
-                if (valu != 0) {
-                    if (found[valu]) return false; // duplicate found
-                    found[valu] = true;
+                int val = board[r][c];
+                if (val != 0) {
+                    if (found[val]) return false;
+                    found[val] = true;
                 }
             }
         }
@@ -50,30 +57,30 @@ public class SudokuBoard {
         for (int c = 0; c < 9; c++) {
             boolean[] found = new boolean[10];
             for (int r = 0; r < 9; r++) {
-                int valu = board[r][c];
-                if (valu != 0) {
-                    if (found[valu]) return false;
-                    found[valu] = true;
+                int val = board[r][c];
+                if (val != 0) {
+                    if (found[val]) return false;
+                    found[val] = true;
                 }
             }
         }
 
-        // Check boxes
-        for (int bRow = 0; bRow < 3; bRow++) {
-            for (int bCol = 0; bCol < 3; bCol++) {
+        // Check 3x3 boxes
+        for (int br = 0; br < 3; br++) {
+            for (int bc = 0; bc < 3; bc++) {
                 boolean[] found = new boolean[10];
-                for (int r = bRow * 3; r < bRow * 3 + 3; r++) {
-                    for (int c = bCol * 3; c < bCol * 3 + 3; c++) {
-                        int valu = board[r][c];
-                        if (valu != 0) {
-                            if (found[valu]) return false;
-                            found[valu] = true;
+                for (int r = br * 3; r < br * 3 + 3; r++) {
+                    for (int c = bc * 3; c < bc * 3 + 3; c++) {
+                        int val = board[r][c];
+                        if (val != 0) {
+                            if (found[val]) return false;
+                            found[val] = true;
                         }
                     }
                 }
             }
         }
 
-        return true; //valid
+        return true;
     }
 }

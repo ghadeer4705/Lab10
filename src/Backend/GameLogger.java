@@ -7,13 +7,13 @@ import java.util.List;
 //reponsible for undo functionality
 public class GameLogger {
     //singleton pattern
-    private static GameLogger instance = new GameLogger();
+   // private static GameLogger instance = new GameLogger();
     private static final String LOG_FILE ="sudoku/current_game/game.log";
 
 
-    public static GameLogger getInstance() {
+   /* public static GameLogger getInstance() {
         return instance;
-    }
+    }*/
     public void logMove(int row ,int column , int newValue , int preValue) throws IOException {
         try(PrintWriter out = new PrintWriter(new FileWriter(LOG_FILE,true))){
             out.println(row+","+column+","+newValue+","+preValue);

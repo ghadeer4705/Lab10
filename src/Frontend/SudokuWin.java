@@ -27,65 +27,71 @@ public class SudokuWin extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Board Panel
-        JPanel boardPanel = new JPanel(new GridLayout(9, 9, 2, 2));
-        boardPanel.setBackground(Color.BLACK);
+        // Board Panel with visible 3x3 grid
+        JPanel mainBoardPanel = new JPanel(new GridLayout(3, 3, 4, 4));
+        mainBoardPanel.setBackground(Color.BLACK);
+        mainBoardPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 4));
         cells = new JTextField[9][9];
+        // Create 9 3x3 boxes
 
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                JTextField cell = new JTextField();
-                cell.setHorizontalAlignment(JTextField.CENTER);
-                cell.setFont(new Font("Arial", Font.BOLD, 24));
+        for (int boxRow = 0; boxRow < 3; boxRow++) {
+            for (int boxCol = 0; boxCol < 3; boxCol++) {
+                JPanel boxPanel = new JPanel(new GridLayout(3, 3, 1, 1));
+                boxPanel.setBackground(Color.GRAY);
+                boxPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+                // Fill each 3x3 box
 
-                // Add thicker borders for 3x3 boxes
-                int top = (i % 3 == 0) ? 3 : 1;
-                int left = (j % 3 == 0) ? 3 : 1;
-                int bottom = (i == 8) ? 3 : 1;
-                int right = (j == 8) ? 3 : 1;
-                cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
+                for (int cellRow = 0; cellRow < 3; cellRow++) {
+                    for (int cellCol = 0; cellCol < 3; cellCol++) {
+                        int i = boxRow * 3 + cellRow;
+                        int j = boxCol * 3 + cellCol;
+                        JTextField cell = new JTextField();
+                        cell.setHorizontalAlignment(JTextField.CENTER);
+                        cell.setFont(new Font("Arial", Font.BOLD, 24));
+                        cell.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+                        final int row = i;
+                        final int col = j;
 
-                final int row = i;
-                final int col = j;
-
-                // Restrict input to single digit 1-9
-                cell.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        char c = e.getKeyChar();
-                        if (!Character.isDigit(c) || c == '0') {
-                            if (c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
-                                e.consume();
+                        // Restrict input to single digit 1-9
+                        cell.addKeyListener(new KeyAdapter() {
+                            @Override
+                            public void keyTyped(KeyEvent e) {
+                                char c = e.getKeyChar();
+                                if (!Character.isDigit(c) || c == '0') {
+                                    if (c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
+                                        e.consume();
+                                    }
+                                }
+                                String currentText = cell.getText();
+                                if (currentText.length() >= 1 && Character.isDigit(c)) {
+                                    e.consume();
+                                }
                             }
-                        }
-                        String currentText = cell.getText();
-                        if (currentText.length() >= 1 && Character.isDigit(c)) {
-                            e.consume();
-                        }
-                    }
 
-                    @Override
-                    public void keyReleased(KeyEvent e) {
-                        try {
-                            String text = cell.getText().trim();
-                            int val = text.isEmpty() ? 0 : Integer.parseInt(text);
-                            int prev = board[row][col];
-
-                            if (val != prev) {
-                                board[row][col] = val;
-                                viewAdapter.logUserAction(new UserAction(row, col, val, prev));
+                            @Override
+                            public void keyReleased(KeyEvent e) {
+                                try {
+                                    String text = cell.getText().trim();
+                                    int val = text.isEmpty() ? 0 : Integer.parseInt(text);
+                                    int prev = board[row][col];
+                                    if (val != prev) {
+                                        board[row][col] = val;
+                                        viewAdapter.logUserAction(new UserAction(row, col, val, prev));
+                                    }
+                                    updateSolveButtonState();
+                                } catch (Exception ex) {
+                                    JOptionPane.showMessageDialog(SudokuWin.this,
+                                            "Error logging action: " + ex.getMessage(),
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+                                }
                             }
-                            updateSolveButtonState();
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(SudokuWin.this,
-                                    "Error logging action: " + ex.getMessage(),
-                                    "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                });
+                        });
 
-                cells[i][j] = cell;
-                boardPanel.add(cell);
+                        cells[i][j] = cell;
+                        boxPanel.add(cell);
+                    }
+                }
+                mainBoardPanel.add(boxPanel);
             }
         }
 
@@ -101,9 +107,10 @@ public class SudokuWin extends JFrame {
         btnVerify = new JButton("Verify");
         btnSolve = new JButton("Solve");
         btnUndo = new JButton("Undo");
-
         // Style action buttons
+
         for (JButton btn : new JButton[]{btnVerify, btnSolve, btnUndo}) {
+
             btn.setFont(new Font("Arial", Font.BOLD, 14));
             btn.setPreferredSize(new Dimension(120, 40));
         }
@@ -115,11 +122,9 @@ public class SudokuWin extends JFrame {
         topRow.add(btnVerify);
         topRow.add(btnSolve);
         topRow.add(btnUndo);
-
         // Bottom row (back button)
         JPanel bottomRow = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         bottomRow.setBackground(new Color(240, 240, 240));
-
         btnBack = new JButton("← Back to Main Menu");
         btnBack.setFont(new Font("Arial", Font.BOLD, 14));
         btnBack.setPreferredSize(new Dimension(250, 40));
@@ -131,7 +136,8 @@ public class SudokuWin extends JFrame {
         buttonPanel.add(topRow);
         buttonPanel.add(bottomRow);
 
-        add(boardPanel, BorderLayout.CENTER);
+        add(mainBoardPanel, BorderLayout.CENTER);
+
         add(buttonPanel, BorderLayout.SOUTH);
 
         // Button actions
@@ -153,7 +159,7 @@ public class SudokuWin extends JFrame {
                     originalCells[i][j] = false;
                 } else {
                     cells[i][j].setText(String.valueOf(board[i][j]));
-                     cells[i][j].setEditable(false);
+                    cells[i][j].setEditable(false);
                     cells[i][j].setBackground(new Color(220, 220, 220));
                     cells[i][j].setForeground(Color.DARK_GRAY);
                     originalCells[i][j] = true;
@@ -179,20 +185,30 @@ public class SudokuWin extends JFrame {
                         cells[i][j].setBackground(new Color(255, 100, 100));
                         hasErrors = true;
                     } else {
-                            cells[i][j].setBackground(new Color(100, 255, 100)); // Green
+
+                        cells[i][j].setBackground(new Color(100, 255, 100));
+
                     }
                 }
             }
         }
 
-        if (incompleteCount > 0) {
+        // Updated message logic
+
+        if (hasErrors && incompleteCount > 0) {
             JOptionPane.showMessageDialog(this,
-                    "Board is INCOMPLETE\n" + incompleteCount + " cells remaining.",
-                    "Verification Result", JOptionPane.INFORMATION_MESSAGE);
+                    "Board is INVALID\n" +
+                            "Red cells contain errors.\n" +
+                            incompleteCount + " cells still empty.",
+                    "Verification Result", JOptionPane.WARNING_MESSAGE);
         } else if (hasErrors) {
             JOptionPane.showMessageDialog(this,
                     "Board is INVALID\nRed cells contain errors.",
                     "Verification Result", JOptionPane.WARNING_MESSAGE);
+        } else if (incompleteCount > 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Board is INCOMPLETE\n" + incompleteCount + " cells remaining.",
+                    "Verification Result", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this,
                     "🎉 Congratulations! Board is VALID!\nPuzzle completed successfully!",
@@ -200,14 +216,12 @@ public class SudokuWin extends JFrame {
             this.dispose();
             new MainGameWin(viewAdapter).setVisible(true);
         }
-
         updateSolveButtonState();
     }
 
     private void solveBoard() {
         try {
             int[][] solved = viewAdapter.solveGame(board);
-
             for (int[] move : solved) {
                 int r = move[0];
                 int c = move[1];
@@ -221,18 +235,15 @@ public class SudokuWin extends JFrame {
                     "Puzzle solved! " + solved.length + " cells filled.",
                     "Solver", JOptionPane.INFORMATION_MESSAGE);
             updateSolveButtonState();
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                     "Cannot solve puzzle:\n" + e.getMessage(),
                     "Solver Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
     private void undoAction() {
         try {
             viewAdapter.undo();
-
             int[][] currentBoard = viewAdapter.getGame('C');
             this.board = currentBoard;
             loadBoard(currentBoard);
@@ -260,6 +271,7 @@ public class SudokuWin extends JFrame {
             new MainGameWin(viewAdapter).setVisible(true);
         }
     }
+
 
     private void updateSolveButtonState() {
         int emptyCount = 0;

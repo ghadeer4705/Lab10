@@ -33,7 +33,7 @@ public class LevelsWin extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        Easy.setBackground(new java.awt.Color(255, 255, 204));
+        Easy.setBackground(new java.awt.Color(16, 129, 65));
         Easy.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
         Easy.setText("Easy level");
         Easy.addActionListener(new java.awt.event.ActionListener() {
@@ -42,7 +42,7 @@ public class LevelsWin extends javax.swing.JFrame {
             }
         });
 
-        Medium.setBackground(new java.awt.Color(255, 255, 204));
+        Medium.setBackground(new java.awt.Color(227, 227, 122));
         Medium.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
         Medium.setText("Medium Level");
         Medium.addActionListener(new java.awt.event.ActionListener() {
@@ -51,7 +51,7 @@ public class LevelsWin extends javax.swing.JFrame {
             }
         });
 
-        Hard.setBackground(new java.awt.Color(255, 255, 204));
+        Hard.setBackground(new java.awt.Color(255, 17, 48));
         Hard.setFont(new java.awt.Font("Segoe UI Semibold", 1, 14)); // NOI18N
         Hard.setText("Hard Level");
         Hard.addActionListener(new java.awt.event.ActionListener() {

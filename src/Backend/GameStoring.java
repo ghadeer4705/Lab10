@@ -14,7 +14,7 @@ import java.util.Random;
 //for storing and loading games
 public class GameStoring {
     //singleton instance
-    private static final GameStoring instance = new GameStoring();
+   // private static final GameStoring instance = new GameStoring();
     private static final String BASE_DIR = "sudoku";
     private static final String EASY_DIR = BASE_DIR + "/easy";
     private static final String MEDIUM_DIR = BASE_DIR + "/medium";
@@ -27,9 +27,9 @@ public class GameStoring {
         createFolders();
     }
 
-    public static GameStoring getInstance() {
+ /*   public static GameStoring getInstance() {
         return instance;
-    }
+    }*/
 
     //create hierarchy folders
     public void createFolders() {
@@ -108,7 +108,7 @@ public class GameStoring {
         saveToCSV(CURRENT_GAME_FILE, board);
     }
 
-    public void deleteGameFromDifficultyFolder(String difficulty, String filename) throws NotFoundException {
+    /*public void deleteGameFromDifficultyFolder(String difficulty, String filename) throws NotFoundException {
         String dir = getDifficultyDirectory(difficulty);
         String filepath = dir + "/" + filename + ".csv";
 
@@ -118,11 +118,79 @@ public class GameStoring {
             file.delete();
 
         }
+    }*/
+    public void deleteGameFromDifficultyFolder(String difficulty, String filename) throws NotFoundException {
+        // Handle null inputs gracefully
+        if (difficulty == null || filename == null) {
+            return; // Just return, don't throw exception
+        }
+
+        try {
+            String dir = getDifficultyDirectory(difficulty);
+            String filepath = dir + "/" + filename + ".csv";
+
+            File file = new File(filepath);
+
+            if (file.exists()) {
+                file.delete();
+            }
+        } catch (IllegalArgumentException e) {
+            // Invalid difficulty, just ignore
+            return;
+        }
     }
 
     public void deleteCurrentGame() throws NotFoundException {
        new File(CURRENT_GAME_FILE).delete();
        new  File(LOG_FILE).delete();
+    }
+    public void deleteCompletedGame(int[][] board) throws IOException {
+        // Try to find and delete the game from all difficulty folders
+        String[] difficulties = {"easy",
+                "medium", "hard"};
+
+        for (String difficulty : difficulties) {
+            try {
+                String dir = getDifficultyDirectory(difficulty);
+                File folder = new File(dir);
+                File[] files = folder.listFiles((d, name) -> name.endsWith(".csv"));
+
+                if (files != null) {
+                    for (File file : files) {
+                        try {
+                            // Read the file and compare with current board
+                            int[][] fileBoard = CSVFileReader.readFromFile(file.getAbsolutePath());
+                            // Compare only original cells
+                            if (boardsMatchOriginal(fileBoard, board)) {
+                                file.delete();
+                                System.out.println("Deleted game from " + difficulty + " folder: " + file.getName());
+                                return;
+                            }
+                        } catch (Exception e) {
+                            continue;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Skip this difficulty if error
+                continue;
+            }
+        }
+    }
+
+    // Helper method to check if boards match (comparing original cells only)
+    private boolean boardsMatchOriginal(int[][] originalGame, int[][] completedBoard) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                // If original game had a value (not 0), it must match completed board
+                if (originalGame[i][j] != 0) {
+                    if (originalGame[i][j] != completedBoard[i][j]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public Catalog getCatalog() {

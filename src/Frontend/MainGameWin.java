@@ -20,14 +20,11 @@ import javax.swing.*;
 public class MainGameWin extends javax.swing.JFrame {
 
     private Controllable controller;
-    /**
-     * Creates new form MainGameWin
-     */
-    public MainGameWin(Controllable controller) {
+
+    /*public MainGameWin(Controllable controller) {
         initComponents();
         setLocationRelativeTo(null);
         this.controller = controller;
-
 
       try {
         boolean[] catalog = controller.getCatalog();
@@ -37,7 +34,62 @@ public class MainGameWin extends javax.swing.JFrame {
     } catch (SolutionInvalidException e) {
         JOptionPane.showMessageDialog(this, "Error generating games: " + e.getMessage());
     }
-}
+}*/
+
+    public MainGameWin(Controllable controller) {
+        initComponents();
+        setLocationRelativeTo(null);
+        this.controller = controller;
+
+        try {
+            boolean[] catalog = controller.getCatalog();
+            boolean hasUnfinished = catalog[0];
+            boolean hasAllLevels = catalog[1];
+
+            if (hasUnfinished) {
+
+                Start.setEnabled(false);
+                Continue.setEnabled(true);
+            } else if (hasAllLevels) {
+
+                Start.setEnabled(true);
+                Continue.setEnabled(false);
+            } else {
+
+                Start.setEnabled(false);
+                Continue.setEnabled(false);
+                askForSolvedPath();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error checking games: " + e.getMessage());
+        }
+    }
+
+    private void askForSolvedPath() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select a Solved Sudoku File");
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String path = fileChooser.getSelectedFile().getAbsolutePath();
+            try {
+                controller.driveGames(path);
+                JOptionPane.showMessageDialog(this,
+                        "Games generated successfully!");
+                Start.setEnabled(true);
+            } catch (SolutionInvalidException e) {
+                JOptionPane.showMessageDialog(this,
+                        "Invalid solution: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                askForSolvedPath();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "No file selected. Application will exit.");
+            System.exit(0);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -119,7 +171,7 @@ public class MainGameWin extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ContinueActionPerformed
 
-    private void StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartActionPerformed
+   /* private void StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartActionPerformed
         try {
             boolean[] catalog = controller.getCatalog();
             boolean anyAvailable = false;
@@ -141,7 +193,21 @@ public class MainGameWin extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error generating or loading games: " + e.getMessage());
         }
-    }//GEN-LAST:event_StartActionPerformed
+    }//GEN-LAST:event_StartActionPerformed*/
+
+    private void StartActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            // Start button
+            LevelsWin lw = new LevelsWin(controller);
+            lw.setVisible(true);
+            this.dispose();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error loading levels: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * @param args the command line arguments
